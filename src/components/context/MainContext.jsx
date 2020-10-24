@@ -55,8 +55,11 @@ export const MainProvider = ({ children }) => {
         id: uuidv4(),
         title,
         completed: false,
+        stared: false
       };
-      setTodos([newTodo, ...todos]);
+      const orderTodos = [newTodo, ...todos]
+      orderStarAndComplete(orderTodos)
+      setTodos(orderTodos);
     }
   };
   const editTodo = (id, text) => {
@@ -74,7 +77,7 @@ export const MainProvider = ({ children }) => {
       if (todo.id === id) todo.completed = !todo.completed;
       return todo;
     });
-    orderTodos.sort((x, y) => x.completed - y.completed);
+    orderStarAndComplete(orderTodos)
     setTodos(orderTodos);
   };
 
@@ -83,9 +86,14 @@ export const MainProvider = ({ children }) => {
       if (todo.id === id) todo.stared = !todo.stared;
       return todo;
     })
-    orderTodos.sort((x,y) => y.stared - x.stared || x.completed - y.completed)
+    orderStarAndComplete(orderTodos)
     setTodos(orderTodos);
   };
+
+  const orderStarAndComplete = (todos) => {
+    todos.sort((x,y) => y.stared - x.stared)
+    todos.sort((x,y) => x.completed - y.completed)
+  }
 
   const delTodo = (id) => setTodos(todos.filter((todo) => todo.id !== id));
   const moveTodo = (old, new_) => {
